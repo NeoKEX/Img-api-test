@@ -1,22 +1,26 @@
-FROM python:3.11-slim
+FROM python:3.11-bullseye
 
 # Install system dependencies for Playwright and Firefox
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
     ca-certificates \
-    libgtk-3-0 \
-    libdbus-glib-1-2 \
-    libxt6 \
-    libsm6 \
-    libice6 \
-    libasound2 \
     fonts-liberation \
     libnss3 \
     libxss1 \
-    xdg-utils \
+    libasound2 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
     libgbm1 \
-    libxshmfence1 \
+    libgtk-3-0 \
+    libnspr4 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -25,9 +29,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright browsers
-RUN python -m playwright install firefox
-RUN python -m playwright install-deps firefox
+# Install Playwright browsers (Firefox only for lighter image)
+RUN python -m playwright install firefox --with-deps
 
 # Copy application code
 COPY worker.py .
